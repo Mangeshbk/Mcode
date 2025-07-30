@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import "./index.css";
+import Child from "./child";
+
+// 100k
 
 export default function CssTest() {
+  const [name, setName] = useState("");
   return (
     <main>
-      <div className='myContent'>react</div>
-      <div className='myName'>Mangesh Landge</div>
+      <h1>This is parent</h1>
+      <Child data={setName} />
     </main>
   );
 }
