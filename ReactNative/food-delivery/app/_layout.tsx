@@ -1,9 +1,32 @@
+import useAuthStore from "@/store/auth";
+import * as Sentry from "@sentry/react-native";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import "./global.css";
 
-export default function RootLayout() {
+Sentry.init({
+  dsn: "https://a71e3493c4d2b12eb45a347910baac0f@o4509775985901568.ingest.us.sentry.io/4509776009756672",
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [
+    Sentry.mobileReplayIntegration(),
+    Sentry.feedbackIntegration(),
+  ],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
+
+export default Sentry.wrap(function RootLayout() {
+  const { isLoading, fetchAuthenticatedUser } = useAuthStore();
+
   const [fontsLoaded, error] = useFonts({
     "QuickSand-Bold": require("../assets/fonts/Quicksand-Bold.ttf"),
     "QuickSand-Medium": require("../assets/fonts/Quicksand-Medium.ttf"),
@@ -17,5 +40,19 @@ export default function RootLayout() {
     if (fontsLoaded) SplashScreen.hideAsync();
   }, [fontsLoaded, error]);
 
-  return <Stack screenOptions={{ headerShown: false }} />;
-}
+  useEffect(() => {
+    fetchAuthenticatedUser();
+  }, []);
+
+  // return <Stack screenOptions={{ headerShown: false }} />;
+
+  if (!fontsLoaded || isLoading) return null;
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      {/* This makes (tabs) a route inside the stack */}
+      <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+      <Stack.Screen name='(auth)' options={{ headerShown: false }} />
+    </Stack>
+  );
+});

@@ -1,5 +1,6 @@
 import CartButton from "@/components/CartButton";
 import { images, offers } from "@/constants";
+import useAuthStore from "@/store/auth";
 import cn from "clsx";
 import { Fragment } from "react";
 import {
@@ -12,7 +13,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function App() {
+export default function Index() {
+  const { user } = useAuthStore();
+  // console.log("USER", JSON.stringify(user, null, 2));
   return (
     // <View className='flex-1 items-center justify-center bg-white'>
     //   <Text className='text-xl font-bold text-blue-500'>
@@ -85,6 +88,14 @@ export default function App() {
             <CartButton />
           </View>
         )}
+        // ListFooterComponent={() => (
+        //   <Button
+        //     title='Try!'
+        //     onPress={() => {
+        //       Sentry.captureException(new Error("First error"));
+        //     }}
+        //   />
+        // )}
       />
     </SafeAreaView>
   );
